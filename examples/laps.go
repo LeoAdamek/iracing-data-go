@@ -28,10 +28,15 @@ func main() {
 
 	tw := tabwriter.NewWriter(os.Stdout, 4, 2, 2, ' ', 0)
 
-	fmt.Println("Lap #\tCar #\tPosition\tTime\n")
+	fmt.Println("Lap #\tCar #\tPosition\tTime (Raw)\tTime\n")
 
 	for _, lap := range laps {
-		fmt.Fprintf(tw, "%3d\t%3s\t%2d\t%s\n", lap.LapNumber, lap.CarNumber, lap.LapPosition, lap.Time())
+		fmt.Fprintf(
+			tw, "%3d\t%3s\t%2d\t%d\t%s\n",
+			lap.LapNumber, lap.CarNumber,
+			lap.LapPosition, lap.LapTime,
+			lap.Time(),
+		)
 	}
 
 	tw.Flush()
