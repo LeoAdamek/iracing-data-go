@@ -2,6 +2,8 @@ package iracing
 
 import (
 	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -67,7 +69,7 @@ type License struct {
 	GroupName          string          `json:"group_name"`
 }
 
-func (c *Client) Self() (*Profile, error) {
+func (c *Client) GetSelf() (*Profile, error) {
 	link := CacheLink{}
 	profile := &Profile{}
 
@@ -80,4 +82,29 @@ func (c *Client) Self() (*Profile, error) {
 	}
 
 	return profile, nil
+}
+
+func (c *Client) GetProfiles(userIDs []uint64, includeLicenses bool) ([]Profile, error) {
+	link := CacheLink{}
+	profiles := []Profile{}
+
+	loc, _ := url.Parse(Host + "/data/member/get")
+
+	if includeLicenses {
+		loc.Query().Add("include_licenses", "true")
+	}
+
+	for _, id := range userIDs {
+		loc.Query().Add("cust_ids", strconv.FormatUint(id, 10))
+	}
+
+	if err := c.json(http.MethodGet, loc.String(), nil, &link); err != nil {
+		return nil, err
+	}
+
+	if err := c.json(http.MethodGet, link.URL, nil, &profiles); err != nil {
+		return nil, err
+	}
+
+	return profiles, nil
 }

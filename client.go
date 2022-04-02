@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/cookiejar"
 	"strconv"
@@ -22,7 +23,7 @@ var (
 )
 
 // RateLimiting data
-type rateLimiting struct {
+type RateLimiting struct {
 	Reset     time.Time
 	Remaining uint64
 	Total     uint64
@@ -30,14 +31,22 @@ type rateLimiting struct {
 
 // iRacing Data API Client
 type Client struct {
-	inner       *http.Client
-	credentials CredentialsProvider
-	rateLimiting
-	Verbose bool
+	inner        *http.Client
+	credentials  CredentialsProvider
+	rateLimiting RateLimiting
+	Verbose      bool
 }
 
 type CacheLink struct {
 	URL string `json:"link"`
+}
+
+type ErrRateLimit struct {
+	Limit RateLimiting
+}
+
+func (e ErrRateLimit) Error() string {
+	return fmt.Sprintf("Rate limit exhausted")
 }
 
 // Create a new client with the given CredentialsProvider
@@ -80,6 +89,11 @@ func (c *Client) do(req *http.Request) (*http.Response, error) {
 		if res.StatusCode >= 500 {
 			return nil, ErrServerError
 		}
+
+		if res.StatusCode == 429 {
+			return nil, ErrRateLimit{c.rateLimiting}
+		}
+
 		return nil, ErrClientError
 	}
 

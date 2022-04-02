@@ -2,6 +2,7 @@ package iracing
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -63,6 +64,9 @@ type Track struct {
 	CategoryName string `json:"category"`
 }
 
+type EventLog struct {
+}
+
 // Get data for a session
 func (c *Client) GetSession(id uint64) (*Session, error) {
 	link := &CacheLink{}
@@ -79,6 +83,17 @@ func (c *Client) GetSession(id uint64) (*Session, error) {
 	}
 
 	return session, nil
+}
+
+func (c *Client) GetSessionEventLog(sessionID uint64, sessionNumber int) (*EventLog, error) {
+	link := CacheLink{}
+	uri, _ := url.Parse(Host + "/data/results/event_log")
+
+	if err := c.json(http.MethodGet, uri.String(), nil, &link); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }
 
 func (s Session) SeriesLogoURL() string {
