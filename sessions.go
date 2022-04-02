@@ -51,7 +51,7 @@ type Session struct {
 	Cautions           int8      `json:"num_cautions"`
 	CautionLaps        int       `json:"num_caution_laps"`
 	LeadChanges        int       `json:"num_lead_changes"`
-	Official           bool      `json:"offission_session"`
+	Official           bool      `json:"official_session"`
 	CanProtest         bool      `json:"can_protest"`
 	Track              Track     `json:"track"`
 }
