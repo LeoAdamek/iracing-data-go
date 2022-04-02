@@ -38,7 +38,11 @@ func (l Lap) Interval() *time.Duration {
 }
 
 func (l Lap) Time() time.Duration {
-	return time.Duration(l.LapTime) * time.Millisecond
+	if l.LapTime == -1 {
+		return time.Duration(0)
+	}
+
+	return time.Duration(l.LapTime) * 100 * time.Microsecond
 }
 
 type LapChartData struct {
