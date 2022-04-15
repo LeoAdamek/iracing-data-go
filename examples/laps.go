@@ -14,7 +14,7 @@ func main() {
 	sessionId := flag.Uint64("s", 0, "Session ID")
 	flag.Parse()
 
-	client := iracing.New(iracing.StaticCredentials(os.Getenv("IRACING_USERNAME"), os.Getenv("IRACING_PASSWORD")))
+	client := iracing.New(iracing.EnvironmentCredentials())
 
 	if err := client.Login(); err != nil {
 		log.Fatalln("Unable to log in: ", err)

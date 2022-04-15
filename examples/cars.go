@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	client := iracing.New(iracing.StaticCredentials(os.Getenv("IRACING_USERNAME"), os.Getenv("IRACING_PASSWORD")))
+	client := iracing.New(iracing.EnvironmentCredentials())
 
 	client.Verbose = true
 

@@ -2,6 +2,7 @@ package iracing
 
 import (
 	"net/http"
+	"os"
 )
 
 // Credentials needed to authenticate with the API
@@ -20,6 +21,16 @@ func StaticCredentials(username string, password string) CredentialsProvider {
 		return &Credentials{
 			Username: username,
 			Password: password,
+		}, nil
+	}
+}
+
+// Enironment variable credentials
+func EnvironmentCredentials() CredentialsProvider {
+	return func() (*Credentials, error) {
+		return &Credentials{
+			Username: os.Getenv("IRACING_USERNAME"),
+			Password: os.Getenv("IRACING_PASSWORD"),
 		}, nil
 	}
 }
