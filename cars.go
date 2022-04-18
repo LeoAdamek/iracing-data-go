@@ -1,6 +1,7 @@
 package iracing
 
 import (
+	"context"
 	"net/http"
 	"time"
 )
@@ -39,16 +40,16 @@ type CarType struct {
 	CarType string `json:"car_type"`
 }
 
-func (c *Client) GetCars() ([]Car, error) {
+func (c *Client) GetCars(ctx context.Context) ([]Car, error) {
 	cars := []Car{}
 
 	link := &CacheLink{}
 
-	if err := c.json(http.MethodGet, Host+"/data/car/get", nil, link); err != nil {
+	if err := c.json(ctx, http.MethodGet, Host+"/data/car/get", nil, link); err != nil {
 		return nil, err
 	}
 
-	if err := c.json(http.MethodGet, link.URL, nil, &cars); err != nil {
+	if err := c.json(ctx, http.MethodGet, link.URL, nil, &cars); err != nil {
 		return nil, err
 	}
 

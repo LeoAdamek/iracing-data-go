@@ -2,6 +2,7 @@ package iracing
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -100,7 +101,7 @@ func (c *Client) do(req *http.Request) (*http.Response, error) {
 	return res, err
 }
 
-func (c *Client) json(method string, url string, body interface{}, into interface{}) error {
+func (c *Client) json(ctx context.Context, method string, url string, body interface{}, into interface{}) error {
 
 	var req *http.Request
 	var err error
@@ -121,6 +122,8 @@ func (c *Client) json(method string, url string, body interface{}, into interfac
 	if err != nil {
 		return err
 	}
+
+	req = req.WithContext(ctx)
 
 	res, err := c.do(req)
 

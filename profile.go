@@ -1,6 +1,7 @@
 package iracing
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -69,22 +70,22 @@ type License struct {
 	GroupName          string          `json:"group_name"`
 }
 
-func (c *Client) GetSelf() (*Profile, error) {
+func (c *Client) GetSelf(ctx context.Context) (*Profile, error) {
 	link := CacheLink{}
 	profile := &Profile{}
 
-	if err := c.json(http.MethodGet, Host+"/data/member/info", nil, &link); err != nil {
+	if err := c.json(ctx, http.MethodGet, Host+"/data/member/info", nil, &link); err != nil {
 		return nil, err
 	}
 
-	if err := c.json(http.MethodGet, link.URL, nil, profile); err != nil {
+	if err := c.json(ctx, http.MethodGet, link.URL, nil, profile); err != nil {
 		return nil, err
 	}
 
 	return profile, nil
 }
 
-func (c *Client) GetProfiles(userIDs []uint64, includeLicenses bool) ([]Profile, error) {
+func (c *Client) GetProfiles(ctx context.Context, userIDs []uint64, includeLicenses bool) ([]Profile, error) {
 	link := CacheLink{}
 	profiles := []Profile{}
 
@@ -98,11 +99,11 @@ func (c *Client) GetProfiles(userIDs []uint64, includeLicenses bool) ([]Profile,
 		loc.Query().Add("cust_ids", strconv.FormatUint(id, 10))
 	}
 
-	if err := c.json(http.MethodGet, loc.String(), nil, &link); err != nil {
+	if err := c.json(ctx, http.MethodGet, loc.String(), nil, &link); err != nil {
 		return nil, err
 	}
 
-	if err := c.json(http.MethodGet, link.URL, nil, &profiles); err != nil {
+	if err := c.json(ctx, http.MethodGet, link.URL, nil, &profiles); err != nil {
 		return nil, err
 	}
 

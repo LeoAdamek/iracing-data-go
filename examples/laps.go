@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -15,12 +16,13 @@ func main() {
 	flag.Parse()
 
 	client := iracing.New(iracing.EnvironmentCredentials())
+	ctx := context.Background()
 
-	if err := client.Login(); err != nil {
+	if err := client.Login(ctx); err != nil {
 		log.Fatalln("Unable to log in: ", err)
 	}
 
-	laps, err := client.GetLaps(*sessionId, 0)
+	laps, err := client.GetLaps(ctx, *sessionId, 0)
 
 	if err != nil {
 		log.Fatalln("Unable to get laps: ", err)

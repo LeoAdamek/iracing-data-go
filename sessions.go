@@ -1,6 +1,7 @@
 package iracing
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -68,28 +69,28 @@ type EventLog struct {
 }
 
 // Get data for a session
-func (c *Client) GetSession(id uint64) (*Session, error) {
+func (c *Client) GetSession(ctx context.Context, id uint64) (*Session, error) {
 	link := &CacheLink{}
 	session := &Session{}
 
 	sessionUrl := Host + "/data/results/get?subsession_id=" + strconv.FormatUint(id, 10)
 
-	if err := c.json(http.MethodGet, sessionUrl, nil, link); err != nil {
+	if err := c.json(ctx, http.MethodGet, sessionUrl, nil, link); err != nil {
 		return nil, err
 	}
 
-	if err := c.json(http.MethodGet, link.URL, nil, session); err != nil {
+	if err := c.json(ctx, http.MethodGet, link.URL, nil, session); err != nil {
 		return nil, err
 	}
 
 	return session, nil
 }
 
-func (c *Client) GetSessionEventLog(sessionID uint64, sessionNumber int) (*EventLog, error) {
+func (c *Client) GetSessionEventLog(ctx context.Context, sessionID uint64, sessionNumber int) (*EventLog, error) {
 	link := CacheLink{}
 	uri, _ := url.Parse(Host + "/data/results/event_log")
 
-	if err := c.json(http.MethodGet, uri.String(), nil, &link); err != nil {
+	if err := c.json(ctx, http.MethodGet, uri.String(), nil, &link); err != nil {
 		return nil, err
 	}
 

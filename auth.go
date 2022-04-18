@@ -1,6 +1,7 @@
 package iracing
 
 import (
+	"context"
 	"net/http"
 	"os"
 )
@@ -35,12 +36,12 @@ func EnvironmentCredentials() CredentialsProvider {
 	}
 }
 
-func (c *Client) Login() error {
+func (c *Client) Login(ctx context.Context) error {
 	credentials, err := c.credentials()
 
 	if err != nil {
 		return err
 	}
 
-	return c.json(http.MethodPost, Host+"/auth", credentials, nil)
+	return c.json(ctx, http.MethodPost, Host+"/auth", credentials, nil)
 }

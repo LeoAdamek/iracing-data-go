@@ -1,6 +1,7 @@
 package iracing
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"strconv"
@@ -56,7 +57,7 @@ type LapChartData struct {
 	} `json:"chunk_info"`
 }
 
-func (c *Client) GetLaps(sessionID uint64, sessionNumber int) ([]Lap, error) {
+func (c *Client) GetLaps(ctx context.Context, sessionID uint64, sessionNumber int) ([]Lap, error) {
 	link := CacheLink{}
 	chartData := LapChartData{}
 	laps := []Lap{}
@@ -68,7 +69,7 @@ func (c *Client) GetLaps(sessionID uint64, sessionNumber int) ([]Lap, error) {
 		log.Println(loc)
 	}
 
-	if err := c.json(http.MethodGet, loc, nil, &link); err != nil {
+	if err := c.json(ctx, http.MethodGet, loc, nil, &link); err != nil {
 		return nil, err
 	}
 
@@ -76,7 +77,7 @@ func (c *Client) GetLaps(sessionID uint64, sessionNumber int) ([]Lap, error) {
 		log.Println(link.URL)
 	}
 
-	if err := c.json(http.MethodGet, link.URL, nil, &chartData); err != nil {
+	if err := c.json(ctx, http.MethodGet, link.URL, nil, &chartData); err != nil {
 		return nil, err
 	}
 
@@ -88,7 +89,7 @@ func (c *Client) GetLaps(sessionID uint64, sessionNumber int) ([]Lap, error) {
 			log.Println(loc)
 		}
 
-		if err := c.json(http.MethodGet, loc, nil, &chunk); err != nil {
+		if err := c.json(ctx, http.MethodGet, loc, nil, &chunk); err != nil {
 			return nil, err
 		}
 
